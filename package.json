@@ -1,0 +1,64 @@
+{
+  "name": "@chancevision/cli",
+  "version": "0.1.2",
+  "description": "Seamless visual intelligence for your command line. Analyze images with state‑of‑the‑art vision AI, instantly.",
+  "type": "module",
+  "bin": {
+    "chancevision": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "pnpm build && pnpm typecheck",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "chancevision",
+    "cli",
+    "ai",
+    "vision",
+    "image",
+    "analysis",
+    "visual-intelligence"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chancevision/chancevision-cli.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.4",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "ofetch": "^1.5.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@types/node": "^25.6.2",
+    "@vitest/coverage-v8": "^4.1.5",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.2",
+    "prettier": "^3.8.3",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2",
+    "vitest": "^4.1.5"
+  }
+}
