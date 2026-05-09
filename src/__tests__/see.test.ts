@@ -115,10 +115,10 @@ describe("buildMessages", () => {
 
 describe("buildRequestBody", () => {
   const defaultModel = "chance/chance-vision-1.5";
-  const baseOpts = { image: "https://example.com/img.png" };
+  const image = "https://example.com/img.png";
 
   it("returns a minimal body with only required fields", () => {
-    const body = buildRequestBody(baseOpts.image, baseOpts);
+    const body = buildRequestBody(image, {});
 
     expect(body.model).toBe(defaultModel);
     expect(body.messages).toHaveLength(1);
@@ -127,41 +127,31 @@ describe("buildRequestBody", () => {
   });
 
   it("includes stream when set to true", () => {
-    const body = buildRequestBody(baseOpts.image, {
-      ...baseOpts,
-      stream: true,
-    });
+    const body = buildRequestBody(image, { stream: true });
 
     expect(body.stream).toBe(true);
   });
 
   it("includes stream when set to false", () => {
-    const body = buildRequestBody(baseOpts.image, {
-      ...baseOpts,
-      stream: false,
-    });
+    const body = buildRequestBody(image, { stream: false });
 
     expect(body.stream).toBe(false);
   });
 
   it("omits stream when undefined", () => {
-    const body = buildRequestBody(baseOpts.image, baseOpts);
+    const body = buildRequestBody(image, {});
 
     expect(body.stream).toBeUndefined();
   });
 
   it("includes output_format when provided", () => {
-    const body = buildRequestBody(baseOpts.image, {
-      ...baseOpts,
-      outputFormat: "ui_component",
-    });
+    const body = buildRequestBody(image, { outputFormat: "ui_component" });
 
     expect(body.output_format).toBe("ui_component");
   });
 
   it("includes both stream and output_format together", () => {
-    const body = buildRequestBody(baseOpts.image, {
-      ...baseOpts,
+    const body = buildRequestBody(image, {
       stream: true,
       outputFormat: "ui_component",
     });
@@ -171,11 +161,11 @@ describe("buildRequestBody", () => {
   });
 
   it("passes the image URL into the messages", () => {
-    const image = "data:image/png;base64,abc123";
-    const body = buildRequestBody(image, baseOpts);
+    const dataUrl = "data:image/png;base64,abc123";
+    const body = buildRequestBody(dataUrl, {});
 
     const content = body.messages[0].content as Array<any>;
     const imagePart = content.find((p: any) => p.type === "image_url");
-    expect(imagePart.image_url.url).toBe(image);
+    expect(imagePart.image_url.url).toBe(dataUrl);
   });
 });
