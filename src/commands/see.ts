@@ -23,7 +23,6 @@ const MIME_TYPES: Record<string, string> = {
 
 interface SeeOptions {
   apiKey?: string;
-  image: string;
   stream?: boolean;
   outputFormat?: string;
   verbose?: boolean;
@@ -104,12 +103,12 @@ async function handleStream(
 export function seeCommand(apiKeyOverride?: string) {
   return new Command("see")
     .description("Seamless visual intelligence. Analyze any image with state‑of‑the‑art vision AI.")
-    .requiredOption("-i, --image <url or path>", "Image URL or local file path to analyze")
+    .argument("<image>", "Image URL or local file path to analyze")
     .option("-k, --api-key <key>", "API key (or set CHANCEVISION_API_KEY env var)")
     .option("-s, --stream", "Stream the response as SSE chunks")
     .option("--output-format <format>", "Output format hint (e.g. ui_component)")
     .option("-v, --verbose", "Show raw chunks and debug info")
-    .action(async (opts: SeeOptions) => {
+    .action(async (image: string, opts: SeeOptions) => {
       const apiKey = resolveApiKey(apiKeyOverride ?? opts.apiKey);
 
       if (!apiKey) {
@@ -118,7 +117,7 @@ export function seeCommand(apiKeyOverride?: string) {
         process.exit(1);
       }
 
-      const imageUrl = isURL(opts.image) ? opts.image : fileToDataUrl(opts.image);
+      const imageUrl = isURL(image) ? image : fileToDataUrl(image);
       const body = buildRequestBody(imageUrl, opts);
 
       if (opts.verbose) {

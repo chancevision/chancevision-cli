@@ -26,11 +26,11 @@ npx @chancevision/cli see --help
 export CHANCEVISION_API_KEY="sk-..."
 
 # Analyze an image from a URL or local file
-chancevision see -i https://example.com/photo.png
-chancevision see -i ~/Pictures/screenshot.png
+chancevision see https://example.com/photo.png
+chancevision see ~/Pictures/screenshot.png
 
 # Stream the response in real time
-chancevision see -s -i https://example.com/photo.png
+chancevision see -s https://example.com/photo.png
 ```
 
 ## Authentication
@@ -39,30 +39,30 @@ Pass your API key one of two ways:
 
 ```bash
 # Option 1: Flag (takes priority)
-chancevision see -k "sk-..." -i https://example.com/img.png
+chancevision see -k "sk-..." https://example.com/img.png
 
 # Option 2: Environment variable (fallback)
 export CHANCEVISION_API_KEY="sk-..."
-chancevision see -i https://example.com/img.png
+chancevision see https://example.com/img.png
 ```
 
 ## Usage
 
 ```
-chancevision see -i <url or path> [options]
+chancevision see <image> [options]
 ```
 
 Sends the image to the model (`chance/chance-vision-1.5`) for analysis.
 
 ### Options
 
-| Option                      | Default      | Description                                     |
-| --------------------------- | ------------ | ----------------------------------------------- |
-| `-i, --image <url or path>` | _(required)_ | Image URL or local file path to analyze         |
-| `-k, --api-key <key>`       | —            | API key (or use `CHANCEVISION_API_KEY` env var) |
-| `-s, --stream`              | `false`      | Stream the response as SSE chunks               |
-| `--output-format <format>`  | —            | Output format hint (e.g. `ui_component`)        |
-| `-v, --verbose`             | `false`      | Show raw chunks and debug info on stderr        |
+| Option                     | Default      | Description                                     |
+| -------------------------- | ------------ | ----------------------------------------------- |
+| `<image>`                  | _(required)_ | Image URL or local file path to analyze         |
+| `-k, --api-key <key>`      | —            | API key (or use `CHANCEVISION_API_KEY` env var) |
+| `-s, --stream`             | `false`      | Stream the response as SSE chunks               |
+| `--output-format <format>` | —            | Output format hint (e.g. `ui_component`)        |
+| `-v, --verbose`            | `false`      | Show raw chunks and debug info on stderr        |
 
 ## Examples
 
@@ -70,28 +70,28 @@ Sends the image to the model (`chance/chance-vision-1.5`) for analysis.
 
 ```bash
 # From a URL
-chancevision see -k "sk-..." -i https://images.chance.vision/image/revisit.png
+chancevision see -k "sk-..." https://images.chance.vision/image/revisit.png
 
 # From a local file
-chancevision see -i ~/Pictures/screenshot.png
+chancevision see ~/Pictures/screenshot.png
 ```
 
 ### Streaming
 
 ```bash
-chancevision see -s -i https://images.chance.vision/image/revisit.png
+chancevision see -s https://images.chance.vision/image/revisit.png
 ```
 
 ### Verbose streaming
 
 ```bash
-chancevision see -s -v -i https://example.com/img.png
+chancevision see -s -v https://example.com/img.png
 ```
 
 ### Output format
 
 ```bash
-chancevision see --output-format ui_component -i https://example.com/screenshot.png
+chancevision see --output-format ui_component https://example.com/screenshot.png
 ```
 
 ## Build from Source
