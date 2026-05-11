@@ -89,7 +89,7 @@ Sends the image to the model (`chance/chance-vision-1.5`) for analysis.
 | `<image>`                  | _(required)_ | Image URL or local file path to analyze         |
 | `-k, --api-key <key>`      | —            | API key (or use `CHANCEVISION_API_KEY` env var) |
 | `-s, --stream`             | `false`      | Stream the response as SSE chunks               |
-| `--output-format <format>` | —            | Output format: `markdown` or `ui_component`     |
+| `--output-format <format>` | `markdown`   | Output format: `markdown` or `ui_component`     |
 | `--json`                   | `false`      | Print the raw JSON API response                 |
 | `-v, --verbose`            | `false`      | Show redacted request details and raw chunks    |
 
