@@ -8,6 +8,7 @@ import { resolveApiKey } from "../config";
 import type { ChatRequest, ContentPart, Message } from "../types";
 
 const DEFAULT_MODEL = "chance/chance-vision-1.5";
+// The API currently ignores this prompt value, so keep the default text.
 const PROMPT = "Let's see this";
 const OUTPUT_FORMATS = ["markdown", "ui_component"] as const;
 
