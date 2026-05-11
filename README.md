@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
+![ChanceVision CLI banner](.github/assets/banner.png)
+
 Analyze images from your terminal with the [Chance Vision](https://chance.vision) visual intelligence API.
 
 Use it for screenshot QA, UI understanding, OCR-style extraction, image captioning, and quick visual checks inside shell scripts.
