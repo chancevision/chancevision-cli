@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { buildMessages, buildRequestBody, isURL, fileToDataUrl } from "../commands/see";
+import {
+  buildMessages,
+  buildRequestBody,
+  fileToDataUrl,
+  getResponseContent,
+  isURL,
+  redactRequestBody,
+} from "../commands/see";
 import { writeFileSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -83,7 +90,7 @@ describe("buildMessages", () => {
     expect(Array.isArray(messages[0].content)).toBe(true);
   });
 
-  it("includes the hardcoded prompt text", () => {
+  it("includes the fixed prompt text", () => {
     const messages = buildMessages("https://example.com/img.png");
     const content = messages[0].content as Array<any>;
 
@@ -167,5 +174,39 @@ describe("buildRequestBody", () => {
     const content = body.messages[0].content as Array<any>;
     const imagePart = content.find((p: any) => p.type === "image_url");
     expect(imagePart.image_url.url).toBe(dataUrl);
+  });
+});
+
+describe("getResponseContent", () => {
+  it("returns the first assistant message content", () => {
+    expect(
+      getResponseContent({
+        choices: [{ message: { content: "A clean product screenshot." } }],
+      }),
+    ).toBe("A clean product screenshot.");
+  });
+
+  it("returns an empty string when no content is present", () => {
+    expect(getResponseContent({ choices: [] })).toBe("");
+  });
+});
+
+describe("redactRequestBody", () => {
+  it("redacts base64 data URLs from verbose request output", () => {
+    const body = buildRequestBody("data:image/png;base64,abc123", {});
+    const redacted = redactRequestBody(body);
+    const content = redacted.messages[0].content as Array<any>;
+    const imagePart = content.find((p: any) => p.type === "image_url");
+
+    expect(imagePart.image_url.url).toBe("data:image/png;base64,[redacted 6 base64 chars]");
+  });
+
+  it("keeps remote URLs unchanged", () => {
+    const body = buildRequestBody("https://example.com/img.png", {});
+    const redacted = redactRequestBody(body);
+    const content = redacted.messages[0].content as Array<any>;
+    const imagePart = content.find((p: any) => p.type === "image_url");
+
+    expect(imagePart.image_url.url).toBe("https://example.com/img.png");
   });
 });

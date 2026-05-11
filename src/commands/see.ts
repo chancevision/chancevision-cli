@@ -8,6 +8,8 @@ import { resolveApiKey } from "../config";
 import type { ChatRequest, ContentPart, Message } from "../types";
 
 const DEFAULT_MODEL = "chance/chance-vision-1.5";
+const PROMPT = "Let's see this";
+const OUTPUT_FORMATS = ["markdown", "ui_component"] as const;
 
 const MIME_TYPES: Record<string, string> = {
   ".png": "image/png",
@@ -24,9 +26,12 @@ const MIME_TYPES: Record<string, string> = {
 interface SeeOptions {
   apiKey?: string;
   stream?: boolean;
-  outputFormat?: string;
+  outputFormat?: OutputFormat;
+  json?: boolean;
   verbose?: boolean;
 }
+
+type OutputFormat = (typeof OUTPUT_FORMATS)[number];
 
 export function isURL(str: string): boolean {
   return /^https?:\/\//i.test(str);
@@ -47,7 +52,7 @@ export function fileToDataUrl(filePath: string): string {
 
 export function buildMessages(image: string): Message[] {
   const content: ContentPart[] = [
-    { type: "text", text: "Let's see this" },
+    { type: "text", text: PROMPT },
     { type: "image_url", image_url: { url: image } },
   ];
 
@@ -64,6 +69,41 @@ export function buildRequestBody(image: string, opts: SeeOptions): ChatRequest {
   if (opts.outputFormat) body.output_format = opts.outputFormat;
 
   return body;
+}
+
+export function getResponseContent(response: {
+  choices?: { message?: { content?: string } }[];
+}): string {
+  return response.choices?.[0]?.message?.content ?? "";
+}
+
+export function redactRequestBody(body: ChatRequest): ChatRequest {
+  return {
+    ...body,
+    messages: body.messages.map((message) => {
+      if (!Array.isArray(message.content)) return message;
+
+      return {
+        ...message,
+        content: message.content.map((part) => {
+          if (part.type !== "image_url") return part;
+
+          const url = part.image_url.url;
+          if (!url.startsWith("data:")) return part;
+
+          const [header = "data:application/octet-stream;base64", payload = ""] = url.split(",", 2);
+          const mime = header.slice("data:".length).replace(";base64", "");
+
+          return {
+            ...part,
+            image_url: {
+              url: `data:${mime};base64,[redacted ${payload.length} base64 chars]`,
+            },
+          };
+        }),
+      };
+    }),
+  };
 }
 
 /* v8 ignore start */
@@ -106,7 +146,8 @@ export function seeCommand(apiKeyOverride?: string) {
     .argument("<image>", "Image URL or local file path to analyze")
     .option("-k, --api-key <key>", "API key (or set CHANCEVISION_API_KEY env var)")
     .option("-s, --stream", "Stream the response as SSE chunks")
-    .option("--output-format <format>", "Output format hint (e.g. ui_component)")
+    .option("--output-format <format>", "Output format (markdown or ui_component)")
+    .option("--json", "Print the raw JSON response")
     .option("-v, --verbose", "Show raw chunks and debug info")
     .action(async (image: string, opts: SeeOptions) => {
       const apiKey = resolveApiKey(apiKeyOverride ?? opts.apiKey);
@@ -117,11 +158,19 @@ export function seeCommand(apiKeyOverride?: string) {
         process.exit(1);
       }
 
+      if (opts.outputFormat && !isOutputFormat(opts.outputFormat)) {
+        console.error(chalk.red(`Error: Unsupported output format — ${opts.outputFormat}`));
+        console.error(`  Available formats: ${OUTPUT_FORMATS.join(", ")}`);
+        process.exit(1);
+      }
+
       const imageUrl = isURL(image) ? image : fileToDataUrl(image);
       const body = buildRequestBody(imageUrl, opts);
 
       if (opts.verbose) {
-        process.stderr.write(chalk.dim("Request body:\n" + JSON.stringify(body, null, 2) + "\n\n"));
+        process.stderr.write(
+          chalk.dim("Request body:\n" + JSON.stringify(redactRequestBody(body), null, 2) + "\n\n"),
+        );
       }
 
       const client = createClient(apiKey);
@@ -131,7 +180,11 @@ export function seeCommand(apiKeyOverride?: string) {
       } else {
         try {
           const response = await client.chatCompletions(body);
-          console.log(JSON.stringify(response, null, 2));
+          if (opts.json) {
+            console.log(JSON.stringify(response, null, 2));
+          } else {
+            console.log(getResponseContent(response));
+          }
         } catch (err: any) {
           console.error(chalk.red(`Request failed: ${err.message || err}`));
           if (err.data) {
@@ -141,5 +194,9 @@ export function seeCommand(apiKeyOverride?: string) {
         }
       }
     });
+}
+
+function isOutputFormat(format: string): format is OutputFormat {
+  return (OUTPUT_FORMATS as readonly string[]).includes(format);
 }
 /* v8 ignore stop */
