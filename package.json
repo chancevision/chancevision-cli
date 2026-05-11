@@ -1,6 +1,6 @@
 {
   "name": "@chancevision/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Seamless visual intelligence for your command line. Analyze images with state‑of‑the‑art vision AI, instantly.",
   "type": "module",
   "bin": {
