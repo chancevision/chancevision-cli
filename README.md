@@ -1,6 +1,7 @@
 # ChanceVision CLI
 
 [![CI](https://github.com/chancevision/chancevision-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/chancevision/chancevision-cli/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@chancevision/cli)](https://www.npmjs.com/package/@chancevision/cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
@@ -15,18 +16,27 @@ npm install -g @chancevision/cli
 # pnpm
 pnpm add -g @chancevision/cli
 
+# yarn
+yarn global add @chancevision/cli
+
+# bun
+bun add -g @chancevision/cli
+
 # Run without installing
 npx @chancevision/cli see --help
 ```
 
 ## Quick Start
 
+Get an API key at [chance.vision](https://chance.vision), then:
+
 ```bash
-# Set your API key
 export CHANCEVISION_API_KEY="sk-..."
 
-# Analyze an image from a URL or local file
+# Analyze an image from a URL
 chancevision see https://example.com/photo.png
+
+# Or a local file
 chancevision see ~/Pictures/screenshot.png
 
 # Stream the response in real time
@@ -35,13 +45,11 @@ chancevision see -s https://example.com/photo.png
 
 ## Authentication
 
-Pass your API key one of two ways:
-
 ```bash
 # Option 1: Flag (takes priority)
 chancevision see -k "sk-..." https://example.com/img.png
 
-# Option 2: Environment variable (fallback)
+# Option 2: Environment variable
 export CHANCEVISION_API_KEY="sk-..."
 chancevision see https://example.com/img.png
 ```
@@ -94,7 +102,7 @@ chancevision see -s -v https://example.com/img.png
 chancevision see --output-format ui_component https://example.com/screenshot.png
 ```
 
-## Build from Source
+## Development
 
 ```bash
 git clone https://github.com/chancevision/chancevision-cli
@@ -108,23 +116,8 @@ pnpm test
 # Build
 pnpm build
 
-# Link globally for development
+# Link globally for local development
 pnpm link --global
-```
-
-## Publish
-
-### npmjs.org
-
-```bash
-npm publish --access public --otp=<code>
-```
-
-### GitHub Packages
-
-```bash
-npm login --registry=https://npm.pkg.github.com
-npm publish
 ```
 
 ## API
