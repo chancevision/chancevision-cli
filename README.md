@@ -7,11 +7,39 @@
 
 ![ChanceVision CLI banner](.github/assets/banner.png)
 
-Analyze images from your terminal with the [Chance Vision](https://chance.vision) visual intelligence API.
+**Give your terminal, scripts, and agents eyes.**
 
-Use it for screenshot QA, UI understanding, OCR-style extraction, image captioning, and quick visual checks inside shell scripts.
+ChanceVision CLI analyzes image URLs and local image files with the [Chance Vision](https://chance.vision) visual intelligence API. Use it to inspect screenshots, understand UI states, extract visual details, caption images, and give AI agents a simple command-line way to see.
+
+```bash
+npm install -g @chancevision/cli
+export CHANCEVISION_API_KEY="sk-..."
+
+chancevision see ./screenshot.png
+```
+
+## Why ChanceVision CLI?
+
+- **Vision from the shell**: analyze local files or remote image URLs without opening a browser.
+- **Agent-friendly by design**: any agent that supports tools, skills, or shell commands can install and call it.
+- **Clean default output**: prints the model answer by default for easy reading and piping.
+- **Two focused formats**: request `markdown` for readable reports or `ui_component` for structured UI output.
+- **Streaming support**: use `--stream` when you want real-time output in interactive workflows.
+- **Script-ready**: works with environment-based auth, file paths, URLs, and standard CLI output.
+
+## Use Cases
+
+| Use case          | Example command                                                            |
+| ----------------- | -------------------------------------------------------------------------- |
+| Screenshot review | `chancevision see ./app-screen.png`                                        |
+| Markdown report   | `chancevision see --output-format markdown ./design.png`                   |
+| UI component data | `chancevision see --output-format ui_component ./mockup.png`               |
+| Remote image      | `chancevision see https://images.chance.vision/image/revisit.png`          |
+| Live response     | `chancevision see --stream https://images.chance.vision/image/revisit.png` |
 
 ## Install
+
+Requires Node.js 20 or newer.
 
 ```bash
 # npm
@@ -30,16 +58,14 @@ bun add -g @chancevision/cli
 npx @chancevision/cli see --help
 ```
 
-Requires Node.js 20 or newer.
-
 ## Quick Start
 
-Get an API key at [chance.vision](https://chance.vision), then:
+> **Get your API key** → [platform.chance.vision](https://platform.chance.vision/)
 
 ```bash
 export CHANCEVISION_API_KEY="sk-..."
 
-# Describe an image from a URL
+# Analyze an image from a URL
 chancevision see https://example.com/photo.png
 
 # Analyze a local file
@@ -49,23 +75,9 @@ chancevision see ~/Pictures/screenshot.png
 chancevision see -s https://example.com/photo.png
 ```
 
-Example output:
-
-```text
-The image shows a dashboard with three summary cards, a revenue chart, and a table of recent orders. The main accessibility issue is low contrast in the secondary labels.
-```
-
-## Why ChanceVision CLI?
-
-- **Fast terminal workflow**: inspect screenshots, product images, and documents without leaving your shell.
-- **Useful defaults**: prints the model answer by default, with `--json` for raw API responses.
-- **Focused output formats**: request `markdown` or `ui_component` when you need a specific response shape.
-- **Streaming support**: use `--stream` for real-time output in interactive workflows.
-- **Script-friendly**: supports remote URLs, local files, environment-based auth, and raw JSON output.
-
 ## Agent-Ready
 
-ChanceVision CLI works well inside local agent tools that can run shell commands, including [OpenClaw](https://github.com/bigcode-project/openclaw), [Hermes](https://github.com/NousResearch/hermes-agent), [Codex](https://github.com/openai/codex), [Claude Code](https://code.claude.com/), and similar coding agents.
+ChanceVision CLI works well inside local agent tools that can run shell commands, including [OpenClaw](https://github.com/bigcode-project/openclaw), [Hermes](https://github.com/NousResearch/hermes-agent), [Codex](https://github.com/openai/codex), [Claude Code](https://code.claude.com/), and similar agents.
 
 Give your agent this install prompt:
 
@@ -82,10 +94,10 @@ Steps:
 5. Do not print, log, or commit API keys.
 6. When asked to inspect an image, run:
    chancevision see <image-path-or-url>
-7. For structured UI output, run:
-   chancevision see --output-format ui_component <image-path-or-url>
-8. For markdown output, run:
+7. For markdown output, run:
    chancevision see --output-format markdown <image-path-or-url>
+8. For structured UI output, run:
+   chancevision see --output-format ui_component <image-path-or-url>
 ```
 
 ## Authentication
@@ -112,64 +124,33 @@ Sends the image to the model (`chance/chance-vision-1.5`) for analysis.
 | Option                     | Default      | Description                                     |
 | -------------------------- | ------------ | ----------------------------------------------- |
 | `<image>`                  | _(required)_ | Image URL or local file path to analyze         |
-| `-k, --api-key <key>`      | —            | API key (or use `CHANCEVISION_API_KEY` env var) |
+| `-k, --api-key <key>`      | -            | API key (or use `CHANCEVISION_API_KEY` env var) |
 | `-s, --stream`             | `false`      | Stream the response as SSE chunks               |
 | `--output-format <format>` | `markdown`   | Output format: `markdown` or `ui_component`     |
 | `--json`                   | `false`      | Print the raw JSON API response                 |
 | `-v, --verbose`            | `false`      | Show redacted request details and raw chunks    |
-
-## Examples
-
-### Basic image analysis
-
-```bash
-chancevision see https://images.chance.vision/image/revisit.png
-chancevision see ~/Pictures/screenshot.png
-```
-
-### Streaming
-
-```bash
-chancevision see -s https://images.chance.vision/image/revisit.png
-```
-
-### Raw JSON
-
-```bash
-chancevision see --json https://example.com/screenshot.png
-```
-
-### Output format
-
-```bash
-chancevision see --output-format markdown https://example.com/screenshot.png
-chancevision see --output-format ui_component https://example.com/screenshot.png
-```
 
 ## Development
 
 ```bash
 git clone https://github.com/chancevision/chancevision-cli
 cd chancevision-cli
-
 pnpm install
 
-# Run tests
+# Run checks
+pnpm lint
+pnpm typecheck
 pnpm test
 
 # Build
 pnpm build
-
-# Link globally for local development
-pnpm link --global
 ```
 
-Before opening a pull request, run:
+To try your local build globally:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
+pnpm link --global
+chancevision --help
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
