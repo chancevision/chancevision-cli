@@ -63,6 +63,31 @@ The image shows a dashboard with three summary cards, a revenue chart, and a tab
 - **Streaming support**: use `--stream` for real-time output in interactive workflows.
 - **Script-friendly**: supports remote URLs, local files, environment-based auth, and raw JSON output.
 
+## Agent-Ready
+
+ChanceVision CLI works well inside local agent tools that can run shell commands, including [OpenClaw](https://github.com/bigcode-project/openclaw), [Hermes](https://github.com/NousResearch/hermes-agent), [Codex](https://github.com/openai/codex), [Claude Code](https://code.claude.com/), and similar coding agents.
+
+Give your agent this install prompt:
+
+```text
+Install ChanceVision CLI so you can analyze screenshots and image files from the terminal.
+
+Steps:
+1. Check that Node.js 20+ is available.
+2. Install the CLI globally:
+   npm install -g @chancevision/cli
+3. Verify the install:
+   chancevision --help
+4. Use the existing CHANCEVISION_API_KEY environment variable if present.
+5. Do not print, log, or commit API keys.
+6. When asked to inspect an image, run:
+   chancevision see <image-path-or-url>
+7. For structured UI output, run:
+   chancevision see --output-format ui_component <image-path-or-url>
+8. For markdown output, run:
+   chancevision see --output-format markdown <image-path-or-url>
+```
+
 ## Authentication
 
 ```bash
