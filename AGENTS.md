@@ -15,20 +15,22 @@ This repository uses the following default workflow for non-trivial work. Agents
 
 ### Skill layout (multi-agent)
 
-Skills are installed in-repo for Cursor / Codex / Claude Code compatibility:
+Skills are installed in-repo for Cursor / Codex / Claude Code compatibility.
 
-| Path | Used by |
-|------|---------|
-| `.agents/skills/` | Cursor, Codex, and other agents that read the universal path |
-| `.claude/skills/` | Claude Code |
+Canonical copies live in `.agents/skills/`. Claude Code paths are **symlinks** into that directory (no duplicated files):
+
+| Path | Role |
+|------|------|
+| `.agents/skills/` | Canonical skill files (Cursor, Codex, universal) |
+| `.claude/skills/<name>` | Symlink → `../../.agents/skills/<name>` (Claude Code) |
 | `skills-lock.json` | Lockfile for reproducible installs |
 
-Reinstall / refresh from repo root:
+Reinstall / refresh from repo root (omit `--copy` so Claude Code gets symlinks):
 
 ```bash
-npx skills add mattpocock/skills --skill grill-me -a cursor -a claude-code -a codex -y --copy
-npx skills add DietrichGebert/ponytail --skill ponytail -a cursor -a claude-code -a codex -y --copy
-npx skills add obra/superpowers --skill "*" -a cursor -a claude-code -a codex -y --copy
+npx skills add mattpocock/skills --skill grill-me -a cursor -a claude-code -a codex -y
+npx skills add DietrichGebert/ponytail --skill ponytail -a cursor -a claude-code -a codex -y
+npx skills add obra/superpowers --skill "*" -a cursor -a claude-code -a codex -y
 ```
 
 ### When to skip
